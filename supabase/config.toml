@@ -1,0 +1,20 @@
+# Local dev identifier (not your cloud project ref — use `supabase link` for that)
+project_id = "paywise"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 17
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = ""

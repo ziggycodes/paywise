@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbfbfa;
+  --foreground: #191919;
+
+  --pw-bg: #fbfbfa;
+  --pw-bg-subtle: #f7f6f3;
+  --pw-surface: #ffffff;
+  --pw-text: #191919;
+  --pw-text-secondary: #6b6f76;
+  --pw-text-tertiary: #9b9a97;
+  --pw-border: #e9e9e7;
+  --pw-border-strong: #d3d1cb;
+
+  --pw-cta: #191919;
+  --pw-cta-hover: #2f2f2f;
+  --pw-accent: #2383e2;
+  --pw-accent-hover: #1a6fc9;
+  --pw-highlight: #d9730d;
+  --pw-highlight-soft: #fbf3db;
+
+  --pw-soft-blue: #e7f3ff;
+  --pw-soft-green: #edf3ec;
+  --pw-soft-purple: #f6f3f9;
+
+  --pw-success-bg: #edf3ec;
+  --pw-success-text: #0f7b6c;
+  --pw-error-bg: #fce8e8;
+  --pw-error-text: #c62828;
+}
+
+.dark {
+  --background: #191919;
+  --foreground: #fbfbfa;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-pw-bg: var(--pw-bg);
+  --color-pw-bg-subtle: var(--pw-bg-subtle);
+  --color-pw-surface: var(--pw-surface);
+  --color-pw-text: var(--pw-text);
+  --color-pw-text-secondary: var(--pw-text-secondary);
+  --color-pw-text-tertiary: var(--pw-text-tertiary);
+  --color-pw-border: var(--pw-border);
+  --color-pw-border-strong: var(--pw-border-strong);
+  --color-pw-cta: var(--pw-cta);
+  --color-pw-cta-hover: var(--pw-cta-hover);
+  --color-pw-accent: var(--pw-accent);
+  --color-pw-accent-hover: var(--pw-accent-hover);
+  --color-pw-highlight: var(--pw-highlight);
+  --color-pw-highlight-soft: var(--pw-highlight-soft);
+  --color-pw-soft-blue: var(--pw-soft-blue);
+  --color-pw-soft-green: var(--pw-soft-green);
+  --color-pw-soft-purple: var(--pw-soft-purple);
+  --color-pw-success-bg: var(--pw-success-bg);
+  --color-pw-success-text: var(--pw-success-text);
+  --color-pw-error-bg: var(--pw-error-bg);
+  --color-pw-error-text: var(--pw-error-text);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--pw-bg);
+  color: var(--pw-text);
 }
