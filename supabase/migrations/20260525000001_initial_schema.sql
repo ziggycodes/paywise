@@ -30,6 +30,7 @@ create table public.users (
   whatsapp_phone text,
   whatsapp_verified_at timestamptz,
   bvn_hash text,
+  -- Planned canonical identity dedup key (hashed NIN only; never store raw NIN)
   nin_hash text,
   identity_verified_at timestamptz,
   identity_provider text,

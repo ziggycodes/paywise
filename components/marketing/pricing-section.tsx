@@ -9,12 +9,12 @@ const tiers = [
     name: "Starter",
     price: "Free",
     period: "",
-    description: "Get clarity on your money without paying a kobo.",
+    description: "Tax estimate on every tier—start free.",
     features: [
       "1 bank connection",
       "Up to 50 transactions/month",
       "Manual entry + 5 AI categorizations/day",
-      "Basic tax estimate",
+      "Monthly tax estimate (NTA 2025)",
     ],
     cta: "Get started",
     href: "/signup",
@@ -25,10 +25,10 @@ const tiers = [
     price: "₦4,500",
     period: "/month",
     altPrice: "₦45,000/year — save ~17%",
-    description: "The full copilot for serious freelancers.",
+    description: "Unlimited tax estimates plus WhatsApp tax copilot.",
     features: [
       "Unlimited transactions & AI categorization",
-      "WhatsApp assistant",
+      "WhatsApp tax assistant",
       "Invoice generator with WHT/VAT",
       "Multi-currency + WHT tracking",
     ],
@@ -67,7 +67,8 @@ export function PricingSection() {
             Simple, transparent pricing
           </h2>
           <p className="mt-4 text-lg text-pw-text-secondary">
-            Naira-first. About the cost of Showmax for Pro—no sales call needed.
+            Every plan includes a tax estimate. Pro adds unlimited updates and a
+            WhatsApp tax copilot—about the cost of Showmax, no sales call needed.
           </p>
         </div>
 

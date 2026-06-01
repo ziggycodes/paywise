@@ -10,9 +10,9 @@ export function AppHeader({ showNav = true }: AppHeaderProps) {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-[15px] font-semibold text-pw-text"
+          className="flex cursor-pointer items-center gap-2 text-[15px] font-semibold text-pw-text"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-cta text-xs font-bold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-highlight text-xs font-bold text-white">
             P
           </span>
           PayWise
@@ -22,19 +22,19 @@ export function AppHeader({ showNav = true }: AppHeaderProps) {
           <nav className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/dashboard"
-              className="rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
+              className="cursor-pointer rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
             >
               Dashboard
             </Link>
             <Link
               href="/login"
-              className="rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
+              className="cursor-pointer rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
             >
               Log in
             </Link>
             <Link
               href="/"
-              className="hidden rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text sm:inline"
+              className="hidden cursor-pointer rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text sm:inline"
             >
               Home
             </Link>

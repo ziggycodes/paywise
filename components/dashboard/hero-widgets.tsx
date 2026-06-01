@@ -52,11 +52,19 @@ export function HeroWidgets() {
         description="Nigeria Tax Act 2025 — Phase 3"
         emptyValue="—"
       />
-      <HeroWidget
-        title="Tax-free runway"
-        description="Amount left before ₦800k threshold"
-        emptyValue="₦800k room"
-      />
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-medium text-pw-text-secondary">
+            Tax-free runway
+          </CardTitle>
+          <CardDescription>Amount left before ₦800k threshold</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-semibold tracking-tight text-pw-highlight">
+            ₦800k room
+          </p>
+        </CardContent>
+      </Card>
       <HeroWidget
         title="Next deadline"
         description="31 March filing countdown"

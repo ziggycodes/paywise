@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PayWise — Give to Caesar! Keep your own.",
   description:
-    "PayWise tracks your hustle, estimates what you owe under Nigeria Tax Act 2025, and helps you keep the rest—without the spreadsheet panic.",
+    "Figure out what you owe under Nigeria Tax Act 2025—automatically. PayWise estimates your tax, tracks income and expenses, and reminds you before deadlines.",
 };
 
 export default function RootLayout({

@@ -40,8 +40,8 @@ export function LandingFooter() {
               <span className="font-semibold text-pw-text">PayWise</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-pw-text-secondary">
-              Give to Caesar! Keep your own. The AI financial copilot for
-              Nigerian freelancers and creators.
+              Give to Caesar! Keep your own. Tax estimates, deadlines, and calm
+              books for Nigerian freelancers.
             </p>
           </div>
 

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { OnboardingStep } from "@/lib/constants";
 import { ONBOARDING_STEPS } from "@/lib/constants";
+import { getNextOnboardingStep } from "@/lib/onboarding/navigation";
 
 type Props = {
   step: OnboardingStep;
@@ -39,14 +40,18 @@ export function OnboardingStepLayout({
     });
   }, [step]);
 
+  function goToNextStep() {
+    const next = getNextOnboardingStep(step);
+    if (next) router.push(`/onboarding/${next}`);
+    else router.push("/dashboard");
+  }
+
   async function handleContinue(formData: Record<string, unknown>) {
     setLoading(true);
     try {
       await onSave(formData);
       trackOnboarding("onboarding_step_completed", step);
-      const next = ONBOARDING_STEPS[stepIndex + 1];
-      if (next) router.push(`/onboarding/${next}`);
-      else router.push("/dashboard");
+      goToNextStep();
     } finally {
       setLoading(false);
     }
@@ -54,9 +59,7 @@ export function OnboardingStepLayout({
 
   function handleSkip() {
     trackOnboarding("onboarding_dropped", step, { skipped: true });
-    const next = ONBOARDING_STEPS[stepIndex + 1];
-    if (next) router.push(`/onboarding/${next}`);
-    else router.push("/dashboard");
+    goToNextStep();
   }
 
   return (
@@ -64,7 +67,7 @@ export function OnboardingStepLayout({
       <CardHeader>
         <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-pw-bg-subtle">
           <div
-            className="h-full rounded-full bg-pw-cta transition-all"
+            className="h-full rounded-full bg-pw-highlight transition-all"
             style={{ width: `${progress}%` }}
           />
         </div>

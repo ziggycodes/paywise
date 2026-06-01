@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/onboarding/role", label: "Onboarding" },
+  { href: "/onboarding/profile", label: "Onboarding" },
 ];
 
 export function DashboardShell({
@@ -21,7 +21,7 @@ export function DashboardShell({
             href="/"
             className="flex items-center gap-2 px-2 text-[15px] font-semibold"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-cta text-xs font-bold text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-highlight text-xs font-bold text-white">
               P
             </span>
             PayWise

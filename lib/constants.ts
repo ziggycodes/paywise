@@ -1,4 +1,5 @@
 export const ONBOARDING_STEPS = [
+  "profile",
   "role",
   "payment-mix",
   "income-band",
@@ -30,7 +31,9 @@ export const USER_ROLES = [
 export const PAYMENT_MIX = [
   { value: "ngn_bank", label: "Nigerian bank transfer" },
   { value: "usd_platforms", label: "USD via Wise, Payoneer, Deel" },
+  { value: "upwork", label: "Upwork" },
+  { value: "fiverr", label: "Fiverr" },
   { value: "crypto", label: "Crypto" },
   { value: "cash", label: "Cash" },
-  { value: "mixed", label: "Mixed" },
+  { value: "other", label: "Other" },
 ] as const;

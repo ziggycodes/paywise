@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { normalizePhoneE164 } from "@/lib/identity/phone";
 
 type Mode = "login" | "signup";
 
@@ -17,24 +16,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  async function checkPhoneCollision(e164: string, userId?: string) {
-    const { data, error: fnError } = await supabase.functions.invoke("check-identity", {
-      body: { phone: e164, user_id: userId },
-    });
-    if (fnError) return true;
-    if (data && !data.ok) {
-      setError("An account already exists for this number. Sign in instead.");
-      return false;
-    }
-    return true;
-  }
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault();
@@ -60,7 +44,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       password,
     });
     if (signInError) setError(signInError.message);
-    else router.push("/onboarding/role");
+    else router.push("/onboarding/profile");
     setLoading(false);
   }
 
@@ -77,72 +61,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setLoading(false);
   }
 
-  async function sendPhoneOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const e164 = normalizePhoneE164(phone);
-    if (!e164) {
-      setError("Enter a valid Nigerian phone number (e.g. 0803...)");
-      setLoading(false);
-      return;
-    }
-    const ok = await checkPhoneCollision(e164);
-    if (!ok) {
-      setLoading(false);
-      return;
-    }
-    const { error: otpError } = await supabase.auth.signInWithOtp({ phone: e164 });
-    if (otpError) setError(otpError.message);
-    else {
-      setOtpSent(true);
-      setMessage("OTP sent. Enter the code below.");
-    }
-    setLoading(false);
-  }
-
-  async function verifyPhoneOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const e164 = normalizePhoneE164(phone);
-    if (!e164) {
-      setError("Invalid phone number");
-      setLoading(false);
-      return;
-    }
-    const { data, error: verifyError } = await supabase.auth.verifyOtp({
-      phone: e164,
-      token: otp,
-      type: "sms",
-    });
-    if (verifyError) {
-      setError(verifyError.message);
-      setLoading(false);
-      return;
-    }
-    if (data.user) {
-      await supabase
-        .from("users")
-        .update({ phone: e164, phone_verified_at: new Date().toISOString(), account_status: "active" })
-        .eq("id", data.user.id);
-      identifyAndGo(data.user.id, e164);
-    }
-    setLoading(false);
-  }
-
-  function identifyAndGo(userId: string, phoneE164?: string) {
-    router.push("/onboarding/role");
-    void userId;
-    void phoneE164;
-  }
-
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>{mode === "login" ? "Welcome back" : "Create your account"}</CardTitle>
         <CardDescription>
-          Give to Caesar! Keep your own. Sign in with email, Google, or phone.
+          Give to Caesar! Keep your own. Sign in with email or Google.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -203,51 +127,24 @@ export function AuthForm({ mode }: { mode: Mode }) {
           Continue with Google
         </Button>
 
-        {!otpSent ? (
-          <form onSubmit={sendPhoneOtp} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone (OTP)</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="08031234567"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <Button type="submit" variant="outline" className="w-full" disabled={loading}>
-              Send OTP
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={verifyPhoneOtp} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="otp">OTP code</Label>
-              <Input
-                id="otp"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              Verify & continue
-            </Button>
-          </form>
-        )}
-
         <p className="text-center text-sm text-pw-text-secondary">
           {mode === "login" ? (
             <>
               New here?{" "}
-              <Link href="/signup" className="font-medium text-pw-accent hover:underline">
+              <Link
+                href="/signup"
+                className="cursor-pointer font-medium text-pw-accent hover:underline"
+              >
                 Sign up
               </Link>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-pw-accent hover:underline">
+              <Link
+                href="/login"
+                className="cursor-pointer font-medium text-pw-accent hover:underline"
+              >
                 Sign in
               </Link>
             </>

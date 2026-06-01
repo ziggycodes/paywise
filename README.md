@@ -2,11 +2,17 @@
 
 AI financial copilot for Nigerian freelancers — Phase 1 foundation.
 
+## Identity model
+
+- **Auth session:** Supabase `auth.users.id` (UUID) is the login primary key.
+- **Planned canonical dedup:** `users.nin_hash` — one-way hash of NIN only; raw NIN is never stored. When NIN verification ships, `check-identity` will treat `nin_hash` as the primary collision key.
+- **Interim dedup:** unique `phone`, `bvn_hash`, and `whatsapp_phone` via the `check-identity` edge function until NIN collection is live.
+
 ## What’s in Phase 1
 
 - Next.js 15 + TypeScript + Tailwind + shadcn-style UI
 - Supabase schema (migrations), RLS, identity columns, merchant seed
-- Auth: email, Google OAuth, phone OTP
+- Auth: email and Google OAuth (phone verified during onboarding)
 - Onboarding wizard with PostHog events
 - Dashboard hero widget shells + Realtime transactions stub
 - `services/ai/*` with `ai_cost_ledger` logging
@@ -27,7 +33,7 @@ AI financial copilot for Nigerian freelancers — Phase 1 foundation.
 
 - Email: enabled
 - Google: enable + add OAuth client (Google Cloud Console)
-- Phone: enable SMS (Twilio or Supabase test OTP)
+- Phone: optional for future; onboarding collects and verifies Nigerian mobile
 
 **Redirect URLs:** add `http://localhost:3000/auth/callback` and your Vercel URL.
 
@@ -72,8 +78,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Verify Phase 1 exit criteria
 
-- [ ] Sign up with phone OTP → duplicate number returns error
-- [ ] Google sign-in → forced through onboarding phone step
+- [ ] Sign up with email or Google → profile step collects name
+- [ ] Google sign-in → onboarding profile then phone verification step
 - [ ] Complete onboarding → land on `/dashboard` with 5 hero shells
 - [ ] Migrations applied; `merchant_dictionary` has seed rows
 - [ ] `GET /api/ai/health` (logged in) logs to `ai_cost_ledger` when `ANTHROPIC_API_KEY` is set

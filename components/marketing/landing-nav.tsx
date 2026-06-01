@@ -21,7 +21,7 @@ export function LandingNav() {
           href="/"
           className="flex items-center gap-2 text-[15px] font-semibold text-pw-text"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-text text-xs font-bold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-highlight text-xs font-bold text-white">
             P
           </span>
           PayWise

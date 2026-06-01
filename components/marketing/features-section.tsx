@@ -17,25 +17,23 @@ export function FeaturesSection() {
     >
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl">
-          <SectionLabel>Features</SectionLabel>
+          <SectionLabel>How PayWise handles your tax</SectionLabel>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-pw-text sm:text-4xl">
-            Everything you need.
-            <br />
-            Nothing you don&apos;t.
+            From messy income to a clear tax number.
           </h2>
           <p className="mt-4 text-lg text-pw-text-secondary">
-            Like Notion for your books—organized, calm, and built for how
-            Nigerian freelancers actually get paid.
+            PayWise auto-categorizes your income and expenses, estimates what you
+            owe under NTA 2025 in real time, and surfaces filing deadlines—so tax
+            stops being a guessing game.
           </p>
         </div>
 
-        {/* Mobbin-style bento grid */}
         <div className="mt-12 grid gap-4 md:grid-cols-6 md:grid-rows-2">
           <BentoCard
-            className="md:col-span-4 md:row-span-2"
+            className="order-3 md:order-1 md:col-span-4 md:row-span-2"
             icon={<Sparkles className="h-5 w-5 text-pw-accent" />}
             title="Smart categorization"
-            description="Bolt, MTN, Chowdeck, Wise—recognized natively. Your books stay clean without you tagging every line."
+            description="So your tax estimate is built on clean books. Bolt, MTN, Chowdeck, Wise—recognized natively without you tagging every line."
             tint="bg-pw-soft-blue"
           >
             <div className="mt-5 space-y-2">
@@ -51,7 +49,7 @@ export function FeaturesSection() {
                   <span className="text-sm font-medium text-pw-text">
                     {row.label}
                   </span>
-                  <span className="text-xs text-pw-text-tertiary">
+                  <span className="text-xs text-pw-text-secondary">
                     {row.tag} · {row.pct}
                   </span>
                 </div>
@@ -60,10 +58,10 @@ export function FeaturesSection() {
           </BentoCard>
 
           <BentoCard
-            className="md:col-span-2"
+            className="order-2 md:order-2 md:col-span-2"
             icon={<MessageCircle className="h-5 w-5 text-emerald-600" />}
             title="WhatsApp copilot"
-            description="Summaries and answers where you already are."
+            description="Tax answers and reminders where you already chat—no new app habit."
             tint="bg-pw-soft-green"
           >
             <div className="mt-4 space-y-2">
@@ -77,36 +75,40 @@ export function FeaturesSection() {
           </BentoCard>
 
           <BentoCard
-            className="md:col-span-2"
+            className="order-1 md:order-3 md:col-span-2"
             icon={<Receipt className="h-5 w-5 text-pw-highlight" />}
-            title="Real-time tax"
-            description="NTA 2025 built in—not a generic calculator."
+            title="Real-time tax estimation"
+            description="NTA 2025 built in—not a generic calculator. See what you owe as your money moves."
             tint="bg-pw-highlight-soft"
           >
             <p className="mt-3 text-2xl font-semibold text-pw-text">₦450,000</p>
-            <p className="text-xs text-pw-text-secondary">Estimated YTD</p>
+            <p className="text-xs font-medium text-pw-text-secondary">
+              Estimated tax (YTD)
+            </p>
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-pw-border">
               <div className="h-full w-[68%] rounded-full bg-pw-highlight" />
             </div>
+            <p className="mt-2 text-xs text-pw-text-secondary">
+              Runway to ₦800k threshold
+            </p>
           </BentoCard>
         </div>
 
-        {/* Secondary feature row — Notion simple list */}
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <MiniFeature
             icon={<Globe className="h-4 w-4" />}
             title="NGN + USD"
-            text="Multi-currency income and FX, handled."
+            text="Multi-currency income flows into one tax picture."
           />
           <MiniFeature
             icon={<FileText className="h-4 w-4" />}
             title="Invoices"
-            text="WHT, VAT, PDF, and payment links."
+            text="WHT and VAT lines ready for filing prep."
           />
           <MiniFeature
             icon={<Smartphone className="h-4 w-4" />}
             title="SMS + bank sync"
-            text="Mono, alerts, receipts—not just spreadsheets."
+            text="Every inflow and expense counted toward your estimate."
           />
         </div>
       </div>
