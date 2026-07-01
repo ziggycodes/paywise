@@ -1,15 +1,29 @@
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { formatNgn } from "@/lib/transactions/format";
+import {
+  daysUntil,
+  nextFilingDeadline,
+  TAX_FREE_THRESHOLD_NGN,
+  type DashboardSummary,
+} from "@/lib/dashboard/summary";
 
 type WidgetProps = {
   title: string;
   description: string;
-  emptyValue: string;
+  value: string;
+  valueClassName?: string;
   cta?: { label: string; href: string };
 };
 
-function HeroWidget({ title, description, emptyValue, cta }: WidgetProps) {
+function HeroWidget({ title, description, value, valueClassName, cta }: WidgetProps) {
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -19,8 +33,13 @@ function HeroWidget({ title, description, emptyValue, cta }: WidgetProps) {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-semibold tracking-tight text-pw-text">
-          {emptyValue}
+        <p
+          className={
+            valueClassName ??
+            "text-2xl font-semibold tracking-tight text-pw-text"
+          }
+        >
+          {value}
         </p>
         {cta && (
           <Button asChild variant="outline" size="sm" className="mt-4">
@@ -32,43 +51,52 @@ function HeroWidget({ title, description, emptyValue, cta }: WidgetProps) {
   );
 }
 
-export function HeroWidgets() {
+export function HeroWidgets({ summary }: { summary: DashboardSummary }) {
+  const deadline = nextFilingDeadline();
+  const days = daysUntil(deadline);
+  const deadlineYear = deadline.getUTCFullYear();
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       <HeroWidget
         title="Income this month"
-        description="NGN-normalized, FX breakdown on hover (Phase 3)"
-        emptyValue="—"
-        cta={{ label: "Connect bank", href: "/onboarding/complete" }}
+        description="NGN-normalized across currencies"
+        value={summary.hasData ? formatNgn(summary.incomeThisMonthNgn) : "—"}
+        cta={{ label: "Connect bank", href: "/transactions/connect" }}
       />
       <HeroWidget
         title="Deductible expenses"
-        description="Captured this month"
-        emptyValue="—"
-        cta={{ label: "Add expense", href: "/onboarding/complete" }}
+        description="Tax-relevant, this year"
+        value={
+          summary.hasData ? formatNgn(summary.deductibleExpensesYtdNgn) : "—"
+        }
+        cta={{ label: "Add expense", href: "/transactions/new?type=expense" }}
       />
       <HeroWidget
         title="Estimated tax (YTD)"
-        description="Nigeria Tax Act 2025 — Phase 3"
-        emptyValue="—"
+        description="Nigeria Tax Act 2025 — full engine in Phase 3"
+        value={
+          summary.hasData && summary.crossedThreshold
+            ? "Above ₦800k"
+            : summary.hasData
+              ? "₦0"
+              : "—"
+        }
       />
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-medium text-pw-text-secondary">
-            Tax-free runway
-          </CardTitle>
-          <CardDescription>Amount left before ₦800k threshold</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-semibold tracking-tight text-pw-highlight">
-            ₦800k room
-          </p>
-        </CardContent>
-      </Card>
+      <HeroWidget
+        title="Tax-free runway"
+        description={`Left before the ₦${(TAX_FREE_THRESHOLD_NGN / 1000).toFixed(
+          0
+        )}k threshold`}
+        value={
+          summary.hasData ? formatNgn(summary.taxFreeRunwayNgn) : "₦800k room"
+        }
+        valueClassName="text-2xl font-semibold tracking-tight text-pw-highlight"
+      />
       <HeroWidget
         title="Next deadline"
-        description="31 March filing countdown"
-        emptyValue="—"
+        description={`31 March ${deadlineYear} filing`}
+        value={`${days} days`}
       />
     </div>
   );

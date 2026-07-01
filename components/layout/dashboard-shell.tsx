@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SignOutButton } from "@/components/layout/sign-out-button";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/onboarding/profile", label: "Onboarding" },
+  { href: "/transactions", label: "Transactions" },
+  { href: "/transactions/new", label: "Add transaction" },
+  { href: "/transactions/scan", label: "Scan receipt" },
+  { href: "/transactions/import", label: "Import statement" },
+  { href: "/transactions/connect", label: "Connect bank" },
 ];
 
 export function DashboardShell({
@@ -37,10 +42,11 @@ export function DashboardShell({
               </Link>
             ))}
           </nav>
-          <div className="mt-8 border-t border-pw-border pt-6">
+          <div className="mt-8 space-y-0.5 border-t border-pw-border pt-6">
+            <SignOutButton />
             <Link
               href="/"
-              className="block px-2 text-xs text-pw-text-tertiary hover:text-pw-text"
+              className="block rounded-md px-2 py-1.5 text-xs text-pw-text-tertiary hover:text-pw-text"
             >
               ← Back to home
             </Link>
@@ -52,12 +58,15 @@ export function DashboardShell({
             <Link href="/" className="font-semibold text-pw-text">
               PayWise
             </Link>
-            <Link
-              href="/"
-              className="text-sm text-pw-text-secondary hover:text-pw-text"
-            >
-              Home
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/transactions"
+                className="text-sm text-pw-text-secondary hover:text-pw-text"
+              >
+                Transactions
+              </Link>
+              <SignOutButton className="cursor-pointer text-sm text-pw-text-secondary hover:text-pw-text" />
+            </div>
           </header>
           {children}
         </div>

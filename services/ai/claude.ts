@@ -17,9 +17,21 @@ export type ClaudeCallOptions = {
   userMessage: string;
 };
 
+export type ClaudeContentOptions = {
+  userId?: string;
+  operation: AiOperation;
+  model?: string;
+  maxTokens?: number;
+  content: Anthropic.Messages.ContentBlockParam[];
+};
+
 const DEFAULT_MODEL = "claude-haiku-4-5-20251001";
 
 let client: Anthropic | null = null;
+
+export function isAiConfigured(): boolean {
+  return !!process.env.ANTHROPIC_API_KEY;
+}
 
 function getClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -34,8 +46,9 @@ function getClient(): Anthropic {
   return client;
 }
 
-export async function callClaude(
-  options: ClaudeCallOptions
+/** Low-level call accepting arbitrary content blocks (text, image, document). */
+export async function callClaudeWithContent(
+  options: ClaudeContentOptions
 ): Promise<{ text: string; usage: { input: number; output: number; cached: number } }> {
   const anthropic = getClient();
   const model = options.model ?? DEFAULT_MODEL;
@@ -44,7 +57,7 @@ export async function callClaude(
     model,
     max_tokens: options.maxTokens ?? 256,
     system: buildCachedSystemBlocks(),
-    messages: [{ role: "user", content: options.userMessage }],
+    messages: [{ role: "user", content: options.content }],
   });
 
   const textBlock = response.content.find((b) => b.type === "text");
@@ -68,6 +81,18 @@ export async function callClaude(
   });
 
   return { text, usage: { input, output, cached } };
+}
+
+export async function callClaude(
+  options: ClaudeCallOptions
+): Promise<{ text: string; usage: { input: number; output: number; cached: number } }> {
+  return callClaudeWithContent({
+    userId: options.userId,
+    operation: options.operation,
+    model: options.model,
+    maxTokens: options.maxTokens,
+    content: [{ type: "text", text: options.userMessage }],
+  });
 }
 
 /** Phase 1 health check — verifies SDK + ledger wiring */

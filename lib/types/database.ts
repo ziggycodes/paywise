@@ -8,6 +8,8 @@ export type UserProfile = {
   id: string;
   email: string | null;
   phone: string | null;
+  first_name: string | null;
+  last_name: string | null;
   full_name: string | null;
   onboarding_completed: boolean;
   default_currency: string;

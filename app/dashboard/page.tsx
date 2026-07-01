@@ -4,7 +4,11 @@ import { TransactionsRealtimeStub } from "@/components/dashboard/transactions-re
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SectionLabel } from "@/components/marketing/section-label";
 import { createClient } from "@/lib/supabase/server";
-import { dashboardGreeting, getFirstName } from "@/lib/user/display-name";
+import { dashboardGreeting, resolveFirstName } from "@/lib/user/display-name";
+import {
+  computeDashboardSummary,
+  type SummaryRow,
+} from "@/lib/dashboard/summary";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -13,18 +17,35 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
 
   let firstName: string | null = null;
+  let summaryRows: SummaryRow[] = [];
   if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("full_name")
-      .eq("id", user.id)
-      .maybeSingle();
+    const [{ data: profile }, { data: txns }] = await Promise.all([
+      supabase
+        .from("users")
+        .select("first_name, last_name, full_name")
+        .eq("id", user.id)
+        .maybeSingle(),
+      supabase
+        .from("transactions")
+        .select("amount_ngn, transaction_type, tax_relevant, date")
+        .eq("user_id", user.id),
+    ]);
 
-    const meta = user.user_metadata as { full_name?: string; name?: string };
-    firstName = getFirstName(
-      profile?.full_name ?? meta.full_name ?? meta.name ?? null
-    );
+    const meta = user.user_metadata as {
+      first_name?: string;
+      last_name?: string;
+      full_name?: string;
+      name?: string;
+    };
+    firstName = resolveFirstName({
+      first_name: profile?.first_name ?? meta.first_name,
+      last_name: profile?.last_name ?? meta.last_name,
+      full_name: profile?.full_name ?? meta.full_name ?? meta.name,
+    });
+    summaryRows = (txns as SummaryRow[] | null) ?? [];
   }
+
+  const summary = computeDashboardSummary(summaryRows);
 
   return (
     <div className="space-y-8 p-4 sm:p-6 md:p-8">
@@ -34,11 +55,11 @@ export default async function DashboardPage() {
           {dashboardGreeting(firstName)}
         </h1>
         <p className="mt-1 text-sm text-pw-text-secondary">
-          Your money at a glance — estimates go live in Phase 3.
+          Your money at a glance — full tax estimates arrive in Phase 3.
         </p>
       </header>
 
-      <HeroWidgets />
+      <HeroWidgets summary={summary} />
 
       <Card>
         <CardHeader>

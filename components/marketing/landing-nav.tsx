@@ -11,7 +11,11 @@ const links = [
   { href: "#pricing", label: "Pricing" },
 ];
 
-export function LandingNav() {
+type LandingNavProps = {
+  showDashboard?: boolean;
+};
+
+export function LandingNav({ showDashboard = false }: LandingNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,6 +41,14 @@ export function LandingNav() {
               {link.label}
             </a>
           ))}
+          {showDashboard && (
+            <Link
+              href="/dashboard"
+              className="rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             href="/login"
             className="rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
@@ -80,6 +92,15 @@ export function LandingNav() {
               {link.label}
             </a>
           ))}
+          {showDashboard && (
+            <Link
+              href="/dashboard"
+              className="rounded-md px-3 py-2.5 text-sm text-pw-text-secondary hover:bg-pw-bg-subtle hover:text-pw-text"
+              onClick={() => setOpen(false)}
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             href="/login"
             className="rounded-md px-3 py-2.5 text-sm text-pw-text-secondary hover:bg-pw-bg-subtle hover:text-pw-text"

@@ -18,3 +18,30 @@ additional_redirect_urls = ["http://localhost:3000/auth/callback"]
 enabled = false
 client_id = ""
 secret = ""
+
+[inbucket]
+enabled = true
+port = 54324
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+double_confirm_changes = true
+
+[auth.email.template.confirmation]
+subject = "Confirm your PayWise account"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = true
+
+[auth.sms.test_otp]
+"+2348031234567" = "123456"
+"+2348012345678" = "123456"
+
+[auth.sms.twilio]
+enabled = true
+account_sid = "ACtest"
+message_service_sid = "MGtest"
+auth_token = "test"

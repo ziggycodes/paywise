@@ -52,6 +52,10 @@ export function OnboardingStepLayout({
       await onSave(formData);
       trackOnboarding("onboarding_step_completed", step);
       goToNextStep();
+    } catch (err) {
+      // Steps throw Error("validation") to block navigation while showing UI errors.
+      if (err instanceof Error && err.message === "validation") return;
+      throw err;
     } finally {
       setLoading(false);
     }

@@ -3,12 +3,11 @@
 import { use } from "react";
 import { OnboardingStepLayout } from "@/components/onboarding/onboarding-step";
 import { PaymentMixStep } from "@/components/onboarding/payment-mix-step";
+import { PhoneVerificationStep } from "@/components/onboarding/phone-verification-step";
 import { ProfileStep } from "@/components/onboarding/profile-step";
 import { Label } from "@/components/ui/label";
 import { INCOME_BANDS, USER_ROLES, type OnboardingStep } from "@/lib/constants";
 import { saveOnboardingFields, completeOnboarding } from "@/lib/onboarding/save";
-import { createClient } from "@/lib/supabase/client";
-import { normalizePhoneE164 } from "@/lib/identity/phone";
 import { Input } from "@/components/ui/input";
 import { notFound } from "next/navigation";
 
@@ -170,54 +169,20 @@ export default function OnboardingStepPage({
   }
 
   if (currentStep === "phone") {
-    return (
-      <OnboardingStepLayout
-        step="phone"
-        title="Verify your phone"
-        description="Required for email and Google sign-up — one verified number per account."
-        onSave={async (d) => {
-          const raw = String(d.phone ?? "");
-          const e164 = normalizePhoneE164(raw);
-          if (!e164) throw new Error("Invalid phone number");
-          const supabase = createClient();
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          const { data: check } = await supabase.functions.invoke("check-identity", {
-            body: { phone: e164, user_id: user?.id },
-          });
-          if (check && !check.ok) {
-            throw new Error("An account already exists for this number");
-          }
-          await saveOnboardingFields({ phone: e164 });
-          await supabase
-            .from("users")
-            .update({
-              phone: e164,
-              phone_verified_at: new Date().toISOString(),
-            })
-            .eq("id", user!.id);
-        }}
-        skippable={false}
-      >
-        <div className="space-y-2">
-          <Label htmlFor="phone">Nigerian mobile</Label>
-          <Input id="phone" name="phone" type="tel" placeholder="08031234567" required />
-        </div>
-      </OnboardingStepLayout>
-    );
+    return <PhoneVerificationStep />;
   }
 
   return (
     <OnboardingStepLayout
       step="complete"
       title="You're set"
-      description="Bank connect and WhatsApp come in later phases. Head to your dashboard."
+      description="Add your first transactions and watch your dashboard come to life."
       onSave={async () => completeOnboarding()}
       skippable={false}
     >
       <p className="text-sm text-pw-text-secondary">
-        Phase 2 will add Mono bank connect. For now, explore your dashboard shells.
+        Next, connect your bank, import a statement, scan a receipt, or add a
+        transaction by hand — then head to your dashboard.
       </p>
     </OnboardingStepLayout>
   );

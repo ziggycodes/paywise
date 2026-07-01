@@ -31,11 +31,35 @@ AI financial copilot for Nigerian freelancers — Phase 1 foundation.
 
 **Auth providers (Dashboard → Authentication → Providers):**
 
-- Email: enabled
+- Email: enabled; **Confirm email** enabled (hosted projects)
 - Google: enable + add OAuth client (Google Cloud Console)
-- Phone: optional for future; onboarding collects and verifies Nigerian mobile
+- Phone: enable for hosted OTP; configure Twilio (or MessageBird) for real SMS
 
 **Redirect URLs:** add `http://localhost:3000/auth/callback` and your Vercel URL.
+
+### Verification (local dev vs cloud)
+
+Point `.env.local` at either **local Supabase** (`http://127.0.0.1:54321`) or your **hosted** project URL.
+
+| Flow | Local (`supabase start`) | Cloud (supabase.com) |
+|------|--------------------------|----------------------|
+| Email confirm (OTP) | `enable_confirmations` in [`supabase/config.toml`](supabase/config.toml); emails in **Inbucket** at http://localhost:54324 (use the 6-digit OTP code) | Dashboard → Email Templates → Confirmation: include `{{ .Token }}`; confirm email **ON**; optional custom SMTP |
+| Phone OTP | Test numbers in `config.toml` → OTP `123456` (e.g. `08031234567`, `08012345678`) | Dashboard → Phone + SMS provider; real SMS to your number |
+
+After editing `config.toml`, reload Auth:
+
+```bash
+supabase stop --no-backup
+supabase start
+```
+
+**Local email:** sign up → open Inbucket → copy the 6-digit OTP code → enter it in the app → onboarding.
+
+**Local phone:** onboarding phone step → enter a test number → Continue → enter `123456` → complete step.
+
+**Cloud email:** if no mail arrives, check Auth logs, confirm-email setting, and redirect allow-list.
+
+**Cloud phone:** without an SMS provider configured, OTP send will fail with an error in the UI.
 
 ### 2. Environment variables
 
@@ -47,8 +71,11 @@ Copy `.env.example` → `.env.local` and fill:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same (server only, never expose) |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project settings |
-| `ANTHROPIC_API_KEY` | Anthropic console (or Vault in prod) |
+| `ANTHROPIC_API_KEY` | Anthropic console (or Vault in prod) — powers receipt OCR and PDF statement parsing |
 | `BVN_HASH_PEPPER` | Generate 32+ random chars |
+| `NEXT_PUBLIC_MONO_PUBLIC_KEY` | Mono dashboard → API keys (public) — enables the Connect widget |
+| `MONO_SECRET_KEY` | Mono dashboard → API keys (secret, server only) |
+| `MONO_WEBHOOK_SECRET` | Mono dashboard → Webhooks — set the endpoint to `/api/webhooks/mono` |
 
 Production: store `ANTHROPIC_API_KEY` in **Supabase Vault**, not in the repo.
 

@@ -21,12 +21,6 @@ export function AppHeader({ showNav = true }: AppHeaderProps) {
         {showNav && (
           <nav className="flex items-center gap-1 sm:gap-2">
             <Link
-              href="/dashboard"
-              className="cursor-pointer rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
-            >
-              Dashboard
-            </Link>
-            <Link
               href="/login"
               className="cursor-pointer rounded-md px-3 py-1.5 text-sm text-pw-text-secondary transition-colors hover:bg-pw-bg-subtle hover:text-pw-text"
             >

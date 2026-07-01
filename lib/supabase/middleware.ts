@@ -1,5 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getResumeOnboardingStep } from "@/lib/onboarding/navigation";
+
+const ONBOARDING_PROGRESS_COLUMNS =
+  "onboarding_completed, first_name, last_name, role_type, payment_mix, income_band, phone_verified_at";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -30,6 +34,8 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+  // Email confirmation gates app access: a session alone is not enough.
+  const isEmailVerified = !!user && !!user.email_confirmed_at;
   const isAuthRoute =
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
@@ -40,36 +46,55 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/privacy") ||
     path.startsWith("/terms");
 
-  if (!user && !isPublicRoute) {
+  // Unauthenticated or unverified-email users cannot enter protected areas
+  // (onboarding, dashboard). Unverified sessions are sent back to signup to
+  // finish email verification, keeping that flow separate from onboarding.
+  if (!isEmailVerified && !isPublicRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = user ? "/signup" : "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
-  }
+  const isAuthCallback =
+    path === "/auth/callback" || path.startsWith("/auth/callback/");
 
-  if (user && path.startsWith("/dashboard")) {
+  // Only verified users are bounced off auth routes into the app. Unverified
+  // sessions stay on /signup so they can complete the email OTP step.
+  const isProtectedAppRoute =
+    path.startsWith("/dashboard") || path.startsWith("/transactions");
+
+  if (isEmailVerified && isAuthRoute && !isAuthCallback) {
     const { data: profile } = await supabase
       .from("users")
-      .select("onboarding_completed")
+      .select(ONBOARDING_PROGRESS_COLUMNS)
       .eq("id", user.id)
       .single();
 
-    if (profile && !profile.onboarding_completed) {
+    const url = request.nextUrl.clone();
+    url.pathname = !profile?.onboarding_completed
+      ? `/onboarding/${getResumeOnboardingStep(profile)}`
+      : "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
+  if (isEmailVerified && isProtectedAppRoute) {
+    const { data: profile } = await supabase
+      .from("users")
+      .select(ONBOARDING_PROGRESS_COLUMNS)
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.onboarding_completed) {
       const url = request.nextUrl.clone();
-      url.pathname = "/onboarding/profile";
+      url.pathname = `/onboarding/${getResumeOnboardingStep(profile)}`;
       return NextResponse.redirect(url);
     }
   }
 
-  if (user && path.startsWith("/onboarding")) {
+  if (isEmailVerified && path.startsWith("/onboarding")) {
     const { data: profile } = await supabase
       .from("users")
-      .select("onboarding_completed")
+      .select(ONBOARDING_PROGRESS_COLUMNS)
       .eq("id", user.id)
       .single();
 
