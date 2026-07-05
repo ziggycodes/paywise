@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const columns = [
   {
@@ -34,9 +35,13 @@ export function LandingFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-text text-xs font-bold text-white">
-                P
-              </span>
+              <Image
+                src="/paywise-icon.svg"
+                alt="PayWise"
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
               <span className="font-semibold text-pw-text">PayWise</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-pw-text-secondary">

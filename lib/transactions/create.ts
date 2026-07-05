@@ -79,15 +79,37 @@ export async function createTransactions(
   let inserted = 0;
 
   if (withExternalId.length > 0) {
-    const { data, error } = await supabase
+    // The idempotency index is partial (`where external_id is not null`), which
+    // Postgres cannot use as an ON CONFLICT arbiter. Dedup in the app instead:
+    // drop rows whose (source, external_id) already exist for this user, then
+    // insert the rest. The partial unique index stays as a DB-level backstop, so
+    // re-running an import or replaying a webhook never double-counts.
+    const externalIds = withExternalId
+      .map((r) => r.external_id)
+      .filter((id): id is string => !!id);
+
+    const { data: existing, error: lookupError } = await supabase
       .from("transactions")
-      .upsert(withExternalId, {
-        onConflict: "user_id,source,external_id",
-        ignoreDuplicates: true,
-      })
-      .select("id");
-    if (error) throw error;
-    inserted += data?.length ?? 0;
+      .select("source, external_id")
+      .eq("user_id", userId)
+      .in("external_id", externalIds);
+    if (lookupError) throw lookupError;
+
+    const existingKeys = new Set(
+      (existing ?? []).map((e) => `${e.source}::${e.external_id}`)
+    );
+    const newRows = withExternalId.filter(
+      (r) => !existingKeys.has(`${r.source}::${r.external_id}`)
+    );
+
+    if (newRows.length > 0) {
+      const { data, error } = await supabase
+        .from("transactions")
+        .insert(newRows)
+        .select("id");
+      if (error) throw error;
+      inserted += data?.length ?? 0;
+    }
   }
 
   if (withoutExternalId.length > 0) {

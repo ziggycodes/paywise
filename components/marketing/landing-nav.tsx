@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,9 +26,14 @@ export function LandingNav({ showDashboard = false }: LandingNavProps) {
           href="/"
           className="flex items-center gap-2 text-[15px] font-semibold text-pw-text"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-highlight text-xs font-bold text-white">
-            P
-          </span>
+          <Image
+            src="/paywise-icon.svg"
+            alt="PayWise"
+            width={28}
+            height={28}
+            className="h-7 w-7"
+            priority
+          />
           PayWise
         </Link>
 

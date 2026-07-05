@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 type AppHeaderProps = {
   showNav?: boolean;
@@ -12,9 +13,14 @@ export function AppHeader({ showNav = true }: AppHeaderProps) {
           href="/"
           className="flex cursor-pointer items-center gap-2 text-[15px] font-semibold text-pw-text"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-pw-highlight text-xs font-bold text-white">
-            P
-          </span>
+          <Image
+            src="/paywise-icon.svg"
+            alt="PayWise"
+            width={28}
+            height={28}
+            className="h-7 w-7"
+            priority
+          />
           PayWise
         </Link>
 

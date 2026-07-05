@@ -40,8 +40,13 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
     path.startsWith("/auth");
+  // API routes authenticate themselves (session check or webhook secret) and
+  // must never receive an HTML redirect to /login — that would break
+  // server-to-server callers like the Mono webhook.
+  const isApiRoute = path.startsWith("/api");
   const isPublicRoute =
     isAuthRoute ||
+    isApiRoute ||
     path === "/" ||
     path.startsWith("/privacy") ||
     path.startsWith("/terms");
